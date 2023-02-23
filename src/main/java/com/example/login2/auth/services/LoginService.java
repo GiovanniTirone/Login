@@ -6,7 +6,7 @@ import com.example.login2.auth.entities.LoginDTO;
 import com.example.login2.auth.entities.LoginRTO;
 import com.example.login2.users.entities.Role;
 import com.example.login2.users.entities.User;
-import com.example.login2.users.repos.UserRepo;
+import com.example.login2.users.repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class LoginService {
     public static final String SECRET = "secret";
 
     @Autowired
-    private UserRepo userRepo;
+    private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -30,7 +30,7 @@ public class LoginService {
     public LoginRTO login (LoginDTO loginDTO)
     {
         if(loginDTO == null) return null;
-        User user = userRepo.findByEmail(loginDTO.getEmail());
+        User user = userRepository.findByEmail(loginDTO.getEmail());
         if(user == null || !user.isActive()) return null;
         boolean canLogin = canUserLogin(user,loginDTO.getPassword());
         if(!canLogin) return null;
@@ -38,7 +38,7 @@ public class LoginService {
         String jwt = generateJwt(user);
         user.setJwtCreatedOn(LocalDateTime.now());
 
-        userRepo.save(user);
+        userRepository.save(user);
         user.setPassword(null);
 
         LoginRTO loginRTO = new LoginRTO();

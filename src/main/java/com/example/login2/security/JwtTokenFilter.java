@@ -6,7 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.login2.auth.services.LoginService;
 import com.example.login2.users.entities.User;
-import com.example.login2.users.repos.UserRepo;
+import com.example.login2.users.repos.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
-    private UserRepo userRepo;
+    private UserRepository userRepository;
 
     private Collection<? extends GrantedAuthority> getAuthorities (User user)
     {
@@ -77,7 +77,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         //Get user identity and set it on spring security context
-        Optional<User> userOpt = userRepo.findById(decodedJWT.getClaim("id").asLong());
+        Optional<User> userOpt = userRepository.findById(decodedJWT.getClaim("id").asLong());
         if(userOpt.isEmpty() || !userOpt.get().isActive()){
             filterChain.doFilter(request,response);
             return;

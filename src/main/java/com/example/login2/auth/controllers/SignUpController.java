@@ -6,10 +6,7 @@ import com.example.login2.auth.entities.SignUpDTO;
 import com.example.login2.auth.services.SignUpService;
 import com.example.login2.users.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -22,6 +19,11 @@ public class SignUpController {
     @PostMapping("/signup")
     public User signup(@RequestBody SignUpDTO signUpDTO) throws Exception {
         return signUpService.signUp(signUpDTO);
+    }
+
+    @PostMapping("/signup/{role}")
+    public User signup(@RequestBody SignUpDTO signUpDTO, @PathVariable String role) throws Exception {
+        return signUpService.signUp(signUpDTO,role);
     }
 
     @PostMapping("/signup/activation")

@@ -44,7 +44,7 @@ public class WebSecurity  {
                 .authorizeHttpRequests()
                 .requestMatchers(antMatcher(toH2Console().toString())).permitAll()
                  .requestMatchers(antMatcher("/**")).permitAll()
-                 .requestMatchers(antMatcher("/admin/**")).hasAnyRole("ROLE_" + Roles.ADMIN,"ROLE_"+Roles.OWNER)
+                 //.requestMatchers(antMatcher("/admin/**")).hasAnyRole("ROLE_" + Roles.ADMIN,"ROLE_"+Roles.OWNER)
                  .requestMatchers(antMatcher("/app/**")).hasRole("ROLE_" + Roles.REGISTERED)
                  /*.requestMatchers(antMatcher("/blog/**")).hasRole("ROLE_EDITOR")
                  .requestMatchers(antMatcher("/dev-tools/**")).hasAnyAuthority("DEV_READ","DEV_DELETE")

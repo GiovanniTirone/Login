@@ -6,7 +6,7 @@ import com.example.login2.notification.services.MailNotificationService;
 import com.example.login2.users.entities.Role;
 import com.example.login2.users.entities.User;
 import com.example.login2.users.repos.RoleRepository;
-import com.example.login2.users.repos.UserRepo;
+import com.example.login2.users.repos.UserRepository;
 import com.example.login2.users.utils.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +22,7 @@ import java.util.UUID;
 public class SignUpService {
 
     @Autowired
-    private UserRepo userRepo;
+    private UserRepository userRepository;
 
     @Autowired
     private MailNotificationService mailNotificationService;
@@ -33,8 +33,8 @@ public class SignUpService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public User signUp (SignUpDTO signUpDTO) throws Exception {
-        User userInDb = userRepo.findByEmail(signUpDTO.getEmail());
+    public User signUp (SignUpDTO signUpDTO,String role) throws Exception {
+        User userInDb = userRepository.findByEmail(signUpDTO.getEmail());
         if (userInDb != null) throw new Exception("User already exists!");
         User user = new User();
         user.setName(signUpDTO.getName());
@@ -45,21 +45,25 @@ public class SignUpService {
         user.setActivationCode(UUID.randomUUID().toString());
 
         Set<Role> roles = new HashSet<>();
-        Optional<Role> roleOpt = roleRepository.findByName(Roles.REGISTERED);
+        Optional<Role> roleOpt = roleRepository.findByName(role.toUpperCase());
         if(roleOpt.isEmpty()) throw new Exception("cannot set user role");
         roles.add(roleOpt.get());
         user.setRoles(roles);
         mailNotificationService.sendActivationMail(user);
 
-        return userRepo.save(user);
+        return userRepository.save(user);
+    }
+
+    public User signUp (SignUpDTO signUpDTO) throws Exception {
+        return signUp(signUpDTO,Roles.REGISTERED);
     }
 
     public User activate (SignUpActivationDTO signUpActivationDTO) throws Exception {
-        User user = userRepo.findByActivationCode(signUpActivationDTO.getActivationCode());
+        User user = userRepository.findByActivationCode(signUpActivationDTO.getActivationCode());
         if(user == null) throw new Exception("User not found");
         user.setActive(true);
         user.setActivationCode(null);
-        return userRepo.save(user);
+        return userRepository.save(user);
     }
 
 }
