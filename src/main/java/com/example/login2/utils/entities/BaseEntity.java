@@ -2,6 +2,7 @@ package com.example.login2.utils.entities;
 
 
 import com.example.login2.users.entities.User;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
 
 import java.time.LocalDateTime;
@@ -12,8 +13,13 @@ public class BaseEntity {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    @ManyToOne
     private User createdBy;
+
+    @ManyToOne
     private User updatedBy;
+
+    public BaseEntity () {}
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

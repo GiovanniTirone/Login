@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 
@@ -44,18 +42,21 @@ public class SignUpService {
         user.setActive(false); //potrebbero iscriversi utenti con una mail fasulla
         user.setActivationCode(UUID.randomUUID().toString());
 
-        Set<Role> roles = new HashSet<>();
-        Optional<Role> roleOpt = roleRepository.findByName(role.toUpperCase());
-        if(roleOpt.isEmpty()) throw new Exception("cannot set user role");
-        roles.add(roleOpt.get());
-        user.setRoles(roles);
-        mailNotificationService.sendActivationMail(user);
+        setRole(Roles.REGISTERED,user);
+        if(role != null) setRole(role,user);
 
+        mailNotificationService.sendActivationMail(user);
         return userRepository.save(user);
     }
 
     public User signUp (SignUpDTO signUpDTO) throws Exception {
-        return signUp(signUpDTO,Roles.REGISTERED);
+        return signUp(signUpDTO,null);
+    }
+
+    private void setRole (String role,User user) throws Exception {
+        Optional<Role> roleOpt = roleRepository.findByName(role.toUpperCase());
+        if(roleOpt.isEmpty()) throw new Exception("cannot set user role");
+        user.getRoles().add(roleOpt.get());
     }
 
     public User activate (SignUpActivationDTO signUpActivationDTO) throws Exception {

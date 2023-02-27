@@ -1,5 +1,6 @@
 package com.example.login2.security;
 
+import com.example.login2.users.entities.User;
 import com.example.login2.users.utils.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,11 +10,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.util.Optional;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
@@ -67,6 +71,18 @@ public class WebSecurity  {
 
 
 
+    public static Optional<User> getCurrentUser () {
+        Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(user instanceof User) {
+            return Optional.of((User) user);
+        }
+        return Optional.empty();
+    }
+
+    public static boolean checkCurrentUser (Long id) {
+        Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user instanceof User && id.equals(((User) user).getId());
+    }
 
 
 }

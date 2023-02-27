@@ -4,7 +4,6 @@ package com.example.login2.orders.entities;
 import com.example.login2.users.entities.User;
 import com.example.login2.utils.entities.BaseEntity;
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
 @Table(name = "orders")
@@ -27,10 +26,10 @@ public class Order extends BaseEntity
 
     private OrderStatusEnum status;
 
-
+    @ManyToOne
     private User restaurant;
 
-
+    @ManyToOne
     private User rider;
 
     public Order() {
